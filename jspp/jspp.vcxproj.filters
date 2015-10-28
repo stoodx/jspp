@@ -13,6 +13,21 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\script_engine">
+      <UniqueIdentifier>{bd35df68-ed09-4864-945c-762c95684a94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\sqlite3">
+      <UniqueIdentifier>{f5a7e359-96e7-4264-b2d4-ab709355fe29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\logger">
+      <UniqueIdentifier>{dbf2a615-aa1c-4f0b-af97-e7f6798312d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\script_engine\duktape">
+      <UniqueIdentifier>{9e26815d-8841-4fb8-b703-4c371a499c7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tests">
+      <UniqueIdentifier>{2b839898-bd1f-4c89-9aa5-9dccaf52a8de}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -21,5 +36,49 @@
     <ClCompile Include="jspp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="sqlite3\sqlite3.c">
+      <Filter>Source Files\sqlite3</Filter>
+    </ClCompile>
+    <ClCompile Include="logger\ILogger.cpp">
+      <Filter>Source Files\logger</Filter>
+    </ClCompile>
+    <ClCompile Include="script_engine\duktape_jse.cpp">
+      <Filter>Source Files\script_engine</Filter>
+    </ClCompile>
+    <ClCompile Include="script_engine\SnssFileAPI.cpp">
+      <Filter>Source Files\script_engine</Filter>
+    </ClCompile>
+    <ClCompile Include="script_engine\SqliteAPI.cpp">
+      <Filter>Source Files\script_engine</Filter>
+    </ClCompile>
+    <ClCompile Include="script_engine\duktape\duktape.c">
+      <Filter>Source Files\script_engine\duktape</Filter>
+    </ClCompile>
+    <ClCompile Include="tests\Foo.cpp">
+      <Filter>tests</Filter>
+    </ClCompile>
+    <ClCompile Include="tests\JsEngine.cpp">
+      <Filter>tests</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="sqlite3\sqlite3.h">
+      <Filter>Source Files\sqlite3</Filter>
+    </ClInclude>
+    <ClInclude Include="logger\ILogger.h">
+      <Filter>Source Files\logger</Filter>
+    </ClInclude>
+    <ClInclude Include="script_engine\duktape_jse.h">
+      <Filter>Source Files\script_engine</Filter>
+    </ClInclude>
+    <ClInclude Include="script_engine\SnssFileAPI.h">
+      <Filter>Source Files\script_engine</Filter>
+    </ClInclude>
+    <ClInclude Include="script_engine\SqliteAPI.h">
+      <Filter>Source Files\script_engine</Filter>
+    </ClInclude>
+    <ClInclude Include="script_engine\duktape\duktape.h">
+      <Filter>Source Files\script_engine\duktape</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
