@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 
+class SqliteAPI;
+
 namespace stood
 {
 	typedef std::string typeSourceCode;
@@ -10,14 +12,16 @@ namespace stood
 	public:
 		enum class Status : int
 		{
-			OK						= 0,
-			JSFILE_NOT_EXISTS		= 1,
-			SNSS_FILE_NOT_VALID		= 2,
-			INVALID_JSON_PARAMS		= 3,
-			INVALID_SOURCE_CODE		= 4,
-			HEAP_CREATION_ERROR		= 5,
-			SCRIPT_PARAMS_NOT_FOUND	= 6,
-			NULL_PTR_RESULT			= 7
+			OK					 = 0,
+			JSFILE_NOT_EXISTS		,
+			SYNCDATAFILEPATH_NOT_EXISTS,
+			SNSS_FILE_NOT_VALID		,
+			INVALID_JSON_PARAMS		,
+			INVALID_SOURCE_CODE		,
+			HEAP_CREATION_ERROR		,
+			SCRIPT_PARAMS_NOT_FOUND	,
+			NULL_PTR_RESULT,
+			NO_MEMORY
 		};
 
 		DuktapeJSE(void);
@@ -35,11 +39,19 @@ namespace stood
 						   const std::string& strJsonParams,
 						   std::string& strResult);
 
-		Status analyzeSyncData(const std::string& strJsFilePath,
-							   const std::string& strSynDataFilePath,
-							   std::string& strResult);
-
 		bool FileExists(const std::string& strFilePath);
 		bool isJsonValid(const std::string& strJson);
+
+		///////////Access to SQLite database///////////////////////////
+	public:
+		static Status analyzeSyncData(const std::string& strJsFilePath,
+							   const std::string& strSynDataFilePath,
+							   std::string& strResult);
+		static DuktapeJSE* m_pDuktapeJSE;
+
+	private:
+		SqliteAPI* m_pSQL;
+		///////////Access to SQLite database///////////////////////////
+
 	};
 }

@@ -9,15 +9,24 @@
 #include "../helpers/json/json.h"
 #endif
 
+#include "SqliteAPI.h"
+
 namespace stood
 {
 
+	DuktapeJSE* DuktapeJSE::m_pDuktapeJSE = NULL;
+	
 	DuktapeJSE::DuktapeJSE(void)
 	{
+		m_pDuktapeJSE = this;
+		m_pSQL = NULL;
 	}
 
 	DuktapeJSE::~DuktapeJSE(void)
 	{
+		m_pDuktapeJSE = NULL;
+		if (m_pSQL)
+			delete m_pSQL;
 	}
 
 	int DuktapeJSE::eval(std::string& source_code)
@@ -133,7 +142,26 @@ namespace stood
 												   const std::string& strSynDataFilePath,
 												   std::string& strResult)
 	{
+		DuktapeJSE duk;
 		// To implement
+		if( !duk.FileExists(strJsFilePath) )
+		{
+			strResult = "JSFILE_NOT_EXISTS";
+			return Status::JSFILE_NOT_EXISTS;
+		}
+		if( !duk.FileExists(strJsFilePath) )
+		{
+			strResult = "SYNCDATAFILEPATH_NOT_EXISTS";
+			return Status::JSFILE_NOT_EXISTS;
+		}
+
+		duk.m_pSQL = new SqliteAPI(strJsFilePath.c_str());
+		if (!duk.m_pSQL || duk.m_pSQL->m_status == duk.m_pSQL->NO_MEMORY)
+		{
+			strResult = "NO_MEMORY";
+			return Status::NO_MEMORY;
+		}
+		strResult = "OK";
 		return Status::OK;
 	}	
 
