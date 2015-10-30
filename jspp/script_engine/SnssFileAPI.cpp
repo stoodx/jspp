@@ -1,6 +1,6 @@
 #include <string>
 #include "SnssFileAPI.h"
-#include "duktape\duktape.h"
+
 #include <iostream>
 #include <fstream>
 #include "../logger/ILogger.h"
@@ -95,7 +95,7 @@ int SnssFileAPI::readInt64(duk_context* ctx)
 	if( m_SnssFile.eof() )
 		return 0;
 
-	duk_push_number(ctx, value);
+	duk_push_number(ctx, (duk_double_t)value);
 	return 1;
 }
 

@@ -12,10 +12,7 @@ SqliteAPI::SqliteAPI(const char* strDatabasePath)
 	if (strDatabasePath)
 	{
 		int nRes = 0;
-		std::wstring strFilename;
-		std::string str("12345");
-		strFilename = s2ws(str); 
-		nRes = sqlite3_open16(strFilename.c_str(), &m_pDb);
+		nRes = sqlite3_open_v2(strDatabasePath, &m_pDb, SQLITE_OPEN_READONLY, NULL);
 		if (nRes != SQLITE_OK)
 		{
 			m_status = Status::ERROR_OPEN_DATABASE;
@@ -25,6 +22,7 @@ SqliteAPI::SqliteAPI(const char* strDatabasePath)
 		{
 			m_status = Status::DATABASE_OPEN;
 		}
+
 	}
 	else
 	{
@@ -38,4 +36,27 @@ SqliteAPI::~SqliteAPI(void)
 {
 	if (m_status == Status::DATABASE_OPEN)
 		sqlite3_close(m_pDb);
+}
+
+
+bool SqliteAPI::convertAsciiToUnicode(const char * strAscii, wchar_t * strUnicode)
+{
+	int len, i;
+	if((strUnicode == NULL) || (strAscii == NULL))
+		return false;
+	len = strlen(strAscii);
+	for(i=0; i<len+1;i++)
+		*strUnicode++ = static_cast<wchar_t>(*strAscii++);
+	return true;
+}
+
+bool SqliteAPI::convertUnicodeToAscii(const wchar_t * strUnicode, char * strAscii)
+{
+	int len, i;
+	if((strUnicode == NULL) || (strAscii == NULL))
+		return false;
+	len = wcslen(strUnicode);
+	for(i=0;i<len+1;i++)
+		*strAscii++ = static_cast<char>(*strUnicode++);
+	return true;
 }

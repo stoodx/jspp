@@ -165,9 +165,12 @@ namespace stood
 		duk_push_global_object(ctx);
 
 		//init openDatabaseNative()
-		duk_push_global_object(ctx);
 		duk_push_c_function(ctx, open_database_native, 1);
 		duk_put_prop_string(ctx, -2,  "openDatabaseNative");
+
+		//init closeDatabaseNative()
+		duk_push_c_function(ctx, close_database_native, 1);
+		duk_put_prop_string(ctx, -2,  "closeDatabaseNative");
 
 		//run js
 		if (duk_peval_file(ctx, strJsFilePath.c_str()) == 0)
@@ -216,6 +219,28 @@ namespace stood
 		}
 
 		duk_push_pointer(ctx, (void*) m_pDuktapeJSE->m_pSQL);
+		return 1;
+	}
+
+	duk_ret_t DuktapeJSE::close_database_native(duk_context *ctx)
+	{
+		 SqliteAPI* pDB = (SqliteAPI*)duk_require_pointer(ctx, 0);
+		if (!m_pDuktapeJSE)
+		{
+			duk_push_boolean(ctx, 0);
+			return 1;
+		}
+		if (!m_pDuktapeJSE->m_pSQL || m_pDuktapeJSE->m_pSQL != pDB)
+		{
+			m_pDuktapeJSE->m_strResult = "DB not init";
+			duk_push_boolean(ctx, 0);
+		}
+		else
+		{
+			delete m_pDuktapeJSE->m_pSQL;
+			m_pDuktapeJSE->m_pSQL = NULL;
+			duk_push_boolean(ctx, 1);
+		}
 		return 1;
 	}
 }

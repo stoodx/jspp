@@ -1,31 +1,3 @@
-/*
-function getError(fileName)
-{
-	print("getError: Not init");
-    return null;
-}
-
-var readFileHelper = (this.readFileNative || getError);
-
-function readFile(fileName)
-{
-    return readFileHelper(fileName);
-}
-
-
-Duktape.modSearch = function (id) 
-{//require
-    print('Loading module: ', id);
-    // Return source code for module or throw an error.
-	var res = readFile(id);
-    if (typeof res === 'buffer') 
-	{	
-		print('require() - ok');
-		return res.toString('ascii');
-    }
-    throw new Error('module not found: ' + id);	
-};
-*/
 function openDatabase(fileName)
 {
 	if (this.openDatabaseNative == null)
@@ -38,6 +10,22 @@ function openDatabase(fileName)
 	throw new Error("Failed openDatabaseNative()");
 }
 
+function closeDatabase(pDB)
+{
+	if (this.closeDatabaseNative == null)
+	{
+		throw new Error("No closeDatabaseNative()");
+	}
+	if (typeof pDB === 'pointer') 
+	{
+		return this.closeDatabaseNative(pDB);
+	}
+	else
+	{
+		throw new Error("closeDatabase() - no pointer");
+	}
+}
+
 function main(databaseName)
 {
 	try {
@@ -46,19 +34,16 @@ function main(databaseName)
 		var pointDB = openDatabase(databaseName);
 		print("openDatabase() ", typeof(pointDB));
 		
-/*		var filebuffer = readFile(databaseName);
-
-		print("sql.Database")
-		var db = new sql.Database(filebuffer);
-
+/*	
 		print("start SELECT")
 		db.each("SELECT id,url FROM moz_favicons", function(row) {
 			print(row.id, row.url);
 		});
+	*/
 
-		print("db.close")
-		db.close();
-		*/
+		var res = closeDatabase(pointDB);
+		print("closeDatabase() ", res);
+		
 		print("Test finish");
 	}	catch (e) {
 		print(e.stack);

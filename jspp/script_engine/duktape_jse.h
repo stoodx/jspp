@@ -1,6 +1,9 @@
 #pragma once
 #include <string>
+
+
 #include "duktape\duktape.h"
+
 
 class SqliteAPI;
 
@@ -51,6 +54,7 @@ namespace stood
 							   std::string& strResult);
 		static DuktapeJSE* m_pDuktapeJSE;
 		static duk_ret_t open_database_native(duk_context *ctx);
+		static duk_ret_t close_database_native(duk_context *ctx);
 
 	private:
 		SqliteAPI* m_pSQL;
