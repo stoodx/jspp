@@ -1,4 +1,6 @@
 #pragma once
+#include <string>
+#include <codecvt>
 
 struct sqlite3;
 
@@ -9,13 +11,32 @@ public:
 	~SqliteAPI(void);
 	enum Status
 	{
-		OK = 0,
-		NO_MEMORY
+		ERROR_OPEN_DATABASE = -2,
+		INVALID_PARAMETER,
+		INIT,
+		DATABASE_OPEN
 	};
 	Status m_status;
+	std::string m_strError;
 
 
 private:
-	char* m_strDatabasePath;
+	sqlite3 * m_pDb;
+
+	inline std::wstring s2ws(const std::string& str)
+	{
+		typedef std::codecvt_utf16<wchar_t> convert_typeX;
+		std::wstring_convert<convert_typeX, wchar_t> converterX;
+
+		return converterX.from_bytes(str);
+	}
+
+	inline std::string ws2s(const std::wstring& wstr)
+	{
+		typedef std::codecvt_utf16<wchar_t> convert_typeX;
+		std::wstring_convert<convert_typeX, wchar_t> converterX;
+
+		return converterX.to_bytes(wstr);
+	}
 };
 

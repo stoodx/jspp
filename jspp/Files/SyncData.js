@@ -1,3 +1,4 @@
+/*
 function getError(fileName)
 {
 	print("getError: Not init");
@@ -11,6 +12,7 @@ function readFile(fileName)
     return readFileHelper(fileName);
 }
 
+
 Duktape.modSearch = function (id) 
 {//require
     print('Loading module: ', id);
@@ -23,14 +25,28 @@ Duktape.modSearch = function (id)
     }
     throw new Error('module not found: ' + id);	
 };
-
-function main(sqlModule, databaseName)
+*/
+function openDatabase(fileName)
 {
-	try {	
-		var sql = require(sqlModule);
+	if (this.openDatabaseNative == null)
+	{
+		throw new Error("No openDatabaseNative()");
+	}
+	var res = this.openDatabaseNative(fileName);
+	if (typeof res === 'pointer') 
+		return res;
+	throw new Error("Failed openDatabaseNative()");
+}
 
-		print("readFile")
-		var filebuffer = readFile(databaseName);
+function main(databaseName)
+{
+	try {
+		print(databaseName);
+		
+		var pointDB = openDatabase(databaseName);
+		print("openDatabase() ", typeof(pointDB));
+		
+/*		var filebuffer = readFile(databaseName);
 
 		print("sql.Database")
 		var db = new sql.Database(filebuffer);
@@ -42,7 +58,7 @@ function main(sqlModule, databaseName)
 
 		print("db.close")
 		db.close();
-		
+		*/
 		print("Test finish");
 	}	catch (e) {
 		print(e.stack);

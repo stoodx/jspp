@@ -1,4 +1,3 @@
-#include "duktape\duktape.h"
 #include "duktape_jse.h"
 #include <iostream>
 #include <fstream>
@@ -143,7 +142,10 @@ namespace stood
 												   std::string& strResult)
 	{
 		DuktapeJSE duk;
-		// To implement
+		Status status = Status::OK;
+		strResult = "OK";
+		duk.m_strResult = strResult;
+
 		if( !duk.FileExists(strJsFilePath) )
 		{
 			strResult = "JSFILE_NOT_EXISTS";
@@ -154,15 +156,66 @@ namespace stood
 			strResult = "SYNCDATAFILEPATH_NOT_EXISTS";
 			return Status::JSFILE_NOT_EXISTS;
 		}
-
-		duk.m_pSQL = new SqliteAPI(strJsFilePath.c_str());
-		if (!duk.m_pSQL || duk.m_pSQL->m_status == duk.m_pSQL->NO_MEMORY)
+		duk_context* ctx = duk_create_heap_default();
+		if(!ctx)
 		{
-			strResult = "NO_MEMORY";
-			return Status::NO_MEMORY;
+			strResult = "HEAP_CREATION_ERROR";
+			return Status::HEAP_CREATION_ERROR;
 		}
-		strResult = "OK";
-		return Status::OK;
+		duk_push_global_object(ctx);
+
+		//init openDatabaseNative()
+		duk_push_global_object(ctx);
+		duk_push_c_function(ctx, open_database_native, 1);
+		duk_put_prop_string(ctx, -2,  "openDatabaseNative");
+
+		//run js
+		if (duk_peval_file(ctx, strJsFilePath.c_str()) == 0)
+		{
+			duk_pop(ctx);
+			duk_get_prop_string(ctx, -1, "main");
+			duk_push_string(ctx, strSynDataFilePath.c_str());
+			if (duk_pcall(ctx, 1) != 0)
+			{
+				strResult = duk_safe_to_string(ctx, -1);
+				status = Status::SCRIPT_RUN_ERROR;
+			}
+			duk_pop(ctx);
+		}
+		else
+		{
+			strResult = duk_safe_to_string(ctx, -1);
+			status = Status::SCRIPT_PARAMS_NOT_FOUND;
+		}
+
+		duk_destroy_heap(ctx);
+		strResult = duk.m_strResult;
+		return status;
 	}	
 
+	duk_ret_t  DuktapeJSE::open_database_native(duk_context *ctx)
+	{
+		std::string strFileName = duk_require_string(ctx, 0);
+		if (strFileName.empty() || !m_pDuktapeJSE)
+		{
+			duk_push_null(ctx);
+			return 1;
+		}
+		if (m_pDuktapeJSE->m_pSQL)
+		{
+			delete m_pDuktapeJSE->m_pSQL;
+			m_pDuktapeJSE->m_pSQL = NULL;
+		}
+		m_pDuktapeJSE->m_pSQL = new SqliteAPI(strFileName.c_str());
+		if (!m_pDuktapeJSE->m_pSQL || 
+			m_pDuktapeJSE->m_pSQL->m_status != m_pDuktapeJSE->m_pSQL->DATABASE_OPEN)
+		{
+			m_pDuktapeJSE->m_strResult = m_pDuktapeJSE->m_pSQL->m_strError;
+			duk_push_null(ctx);
+			return 1;
+		}
+
+		duk_push_pointer(ctx, (void*) m_pDuktapeJSE->m_pSQL);
+		return 1;
+	}
 }

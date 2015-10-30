@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "duktape\duktape.h"
 
 class SqliteAPI;
 
@@ -21,7 +22,8 @@ namespace stood
 			HEAP_CREATION_ERROR		,
 			SCRIPT_PARAMS_NOT_FOUND	,
 			NULL_PTR_RESULT,
-			NO_MEMORY
+			NO_MEMORY,
+			SCRIPT_RUN_ERROR
 		};
 
 		DuktapeJSE(void);
@@ -48,9 +50,11 @@ namespace stood
 							   const std::string& strSynDataFilePath,
 							   std::string& strResult);
 		static DuktapeJSE* m_pDuktapeJSE;
+		static duk_ret_t open_database_native(duk_context *ctx);
 
 	private:
 		SqliteAPI* m_pSQL;
+		std::string m_strResult;
 		///////////Access to SQLite database///////////////////////////
 
 	};
