@@ -52,13 +52,14 @@ namespace stood
 		static Status analyzeSyncData(const std::string& strJsFilePath,
 							   const std::string& strSynDataFilePath,
 							   std::string& strResult);
-		static DuktapeJSE* m_pDuktapeJSE;
-		static duk_ret_t open_database_native(duk_context *ctx);
-		static duk_ret_t close_database_native(duk_context *ctx);
 
 	private:
 		SqliteAPI* m_pSQL;
 		std::string m_strResult;
+		static DuktapeJSE* m_pDuktapeJSE;
+		//callbacks
+		static duk_ret_t open_database_native(duk_context *ctx);
+		static duk_ret_t close_database_native(duk_context *ctx);
 		///////////Access to SQLite database///////////////////////////
 
 	};
