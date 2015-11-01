@@ -178,7 +178,7 @@ namespace stood
 			duk_pop(ctx);
 			duk_get_prop_string(ctx, -1, "main");
 			duk_push_string(ctx, strSynDataFilePath.c_str());
-			if (duk_pcall(ctx, 1) != 0)
+ 			if (duk_pcall(ctx, 1) != 0)
 			{
 				strResult = duk_safe_to_string(ctx, -1);
 				status = Status::SCRIPT_RUN_ERROR;
@@ -225,7 +225,7 @@ namespace stood
 	duk_ret_t DuktapeJSE::close_database_native(duk_context *ctx)
 	{
 		 SqliteAPI* pDB = (SqliteAPI*)duk_require_pointer(ctx, 0);
-		if (!m_pDuktapeJSE)
+		if (!m_pDuktapeJSE)            
 		{
 			duk_push_boolean(ctx, 0);
 			return 1;

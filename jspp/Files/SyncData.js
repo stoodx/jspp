@@ -26,6 +26,28 @@ function closeDatabase(pDB)
 	}
 }
 
+function execDatabase(pDB, statement, func)
+{
+	if (this.execDatabaseNative == null)
+	{
+		throw new Error("No execDatabaseNative()");
+	}	
+	if (typeof pDB !== 'pointer' ||
+		typeof statement !== 'string' ||
+		typeof func !== 'function')
+	{
+		throw new Error("execDatabase() - invalid parameters: " +  
+				typeof pDB + ", " + typeof statement + ", " +  typeof func);
+	}
+	
+	var rows = new Array(this.execDatabaseNative(pDB, statement));
+	for (var i = 0; i < rows.length(); i++)
+	{
+		var row = ['id', 'url'];
+		func(row);
+	}
+}
+
 function main(databaseName)
 {
 	try {
@@ -33,13 +55,11 @@ function main(databaseName)
 		
 		var pointDB = openDatabase(databaseName);
 		print("openDatabase() ", typeof(pointDB));
-		
-/*	
-		print("start SELECT")
-		db.each("SELECT id,url FROM moz_favicons", function(row) {
-			print(row.id, row.url);
+
+		print("execDatabase()");
+		execDatabase(pointDB, "SELECT id,url FROM moz_favicons", function(row) {
+			print(row.id, row.url)
 		});
-	*/
 
 		var res = closeDatabase(pointDB);
 		print("closeDatabase() ", res);
