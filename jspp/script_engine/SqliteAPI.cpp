@@ -38,6 +38,30 @@ SqliteAPI::~SqliteAPI(void)
 		sqlite3_close(m_pDb);
 }
 
+bool SqliteAPI::sqlExec(const char* strStaemenet, int (*callback)(void*, int, char**, char**))
+{
+	if (m_status != Status::DATABASE_OPEN)
+	{
+		m_strError = "DATABASE_CLOSE";
+		return false;
+	}
+	if (!strStaemenet)
+	{
+		m_strError = "INVALID_PARAMETER";
+		return false;
+	}
+
+	int nRes = 0;
+	char* strErr = NULL;
+	nRes = sqlite3_exec(m_pDb, strStaemenet, callback,  0, &strErr);
+	if( nRes != SQLITE_OK )
+	{
+		m_strError = strErr;
+		sqlite3_free(strErr);
+		return false;
+    }
+	return true;
+}
 
 bool SqliteAPI::convertAsciiToUnicode(const char * strAscii, wchar_t * strUnicode)
 {

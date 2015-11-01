@@ -17,6 +17,7 @@ public:
 	};
 	Status m_status;
 	std::string m_strError;
+	bool sqlExec(const char* strStaemenet, int (*callback)(void*, int, char**, char**) = NULL);
 
 
 private:

@@ -28,7 +28,7 @@ function closeDatabase(pDB)
 
 function execDatabase(pDB, statement, func)
 {
-	if (this.execDatabaseNative == null)
+	if (this.execDatabaseNative == null || this.readDatabaseEntiesNative == null)
 	{
 		throw new Error("No execDatabaseNative()");
 	}	
@@ -40,11 +40,32 @@ function execDatabase(pDB, statement, func)
 				typeof pDB + ", " + typeof statement + ", " +  typeof func);
 	}
 	
-	var rows = new Array(this.execDatabaseNative(pDB, statement));
-	for (var i = 0; i < rows.length(); i++)
+	var bRes = this.execDatabaseNative(pDB, statement);
+	if (bRes == false)
 	{
-		var row = ['id', 'url'];
-		func(row);
+		print("execDatabase() - no entries");
+		return;
+	}
+	
+	var nField = 0;
+	var row = ['id', 'url'];
+	for (var i = 0; i < 50; i++) //50 entries
+	{
+		var rows = this.readDatabaseEntiesNative(pDB);
+		if (rows === null || typeof rows == "undefined")
+			break;
+		if (nField == 0)
+		{
+			row.id = rows;
+			nField = 1;
+		}
+		else
+		{
+			row.url = rows;
+			nField = 0;
+			func(row);
+			print();
+		}
 	}
 }
 

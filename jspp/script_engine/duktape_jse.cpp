@@ -172,6 +172,14 @@ namespace stood
 		duk_push_c_function(ctx, close_database_native, 1);
 		duk_put_prop_string(ctx, -2,  "closeDatabaseNative");
 
+		//init execDatabaseNative()
+		duk_push_c_function(ctx, exec_database_native, 2);
+		duk_put_prop_string(ctx, -2,  "execDatabaseNative");
+
+		//init readDatabaseEntiesNative()
+		duk_push_c_function(ctx, read_database_entries_native, 1);
+		duk_put_prop_string(ctx, -2,  "readDatabaseEntiesNative");
+
 		//run js
 		if (duk_peval_file(ctx, strJsFilePath.c_str()) == 0)
 		{
@@ -224,12 +232,12 @@ namespace stood
 
 	duk_ret_t DuktapeJSE::close_database_native(duk_context *ctx)
 	{
-		 SqliteAPI* pDB = (SqliteAPI*)duk_require_pointer(ctx, 0);
 		if (!m_pDuktapeJSE)            
 		{
 			duk_push_boolean(ctx, 0);
 			return 1;
 		}
+		SqliteAPI* pDB = (SqliteAPI*)duk_require_pointer(ctx, 0);
 		if (!m_pDuktapeJSE->m_pSQL || m_pDuktapeJSE->m_pSQL != pDB)
 		{
 			m_pDuktapeJSE->m_strResult = "DB not init";
@@ -241,6 +249,64 @@ namespace stood
 			m_pDuktapeJSE->m_pSQL = NULL;
 			duk_push_boolean(ctx, 1);
 		}
+		return 1;
+	}
+
+	duk_ret_t DuktapeJSE::exec_database_native(duk_context *ctx)
+	{
+		if (!m_pDuktapeJSE)            
+		{
+			duk_push_boolean(ctx, 0);
+			return 1;
+		}
+		SqliteAPI* pDB = (SqliteAPI*)duk_require_pointer(ctx, 0);
+		std::string strStatement = duk_require_string(ctx, -1);
+		if (!m_pDuktapeJSE->m_pSQL || 
+			m_pDuktapeJSE->m_pSQL != pDB || 
+			strStatement.empty())
+		{
+			m_pDuktapeJSE->m_strResult = "DB not init";
+			duk_push_null(ctx);
+		}
+		m_pDuktapeJSE->m_deqstrSQLEntries.clear();
+		if (!m_pDuktapeJSE->m_pSQL->sqlExec(strStatement.c_str(), sql_callback))
+		{
+			m_pDuktapeJSE->m_strResult = m_pDuktapeJSE->m_pSQL->m_strError;
+			m_pDuktapeJSE->m_deqstrSQLEntries.clear();
+			duk_push_boolean(ctx, 0);
+			return 1;
+		}
+		if (m_pDuktapeJSE->m_deqstrSQLEntries.empty())
+		{
+			duk_push_boolean(ctx, 0);
+		}
+		else
+		{
+			duk_push_boolean(ctx, 1);
+		}
+		return 1;
+	}
+
+	int DuktapeJSE::sql_callback(void *notUsed, int argc, char **strRow, char **strColName)
+	{
+		if (!m_pDuktapeJSE)
+			return 1;
+		for(int i = 0; i < argc; i++)
+		{
+			m_pDuktapeJSE->m_deqstrSQLEntries.push_back(strRow[i] ? strRow[i] : NULL );
+		}
+		return 0;
+	}
+
+	int DuktapeJSE::read_database_entries_native(duk_context *ctx)
+	{
+		if (!m_pDuktapeJSE || m_pDuktapeJSE->m_deqstrSQLEntries.empty())            
+		{
+			duk_push_null(ctx);
+			return 1;
+		}
+		duk_push_string(ctx, m_pDuktapeJSE->m_deqstrSQLEntries[0].c_str());
+		m_pDuktapeJSE->m_deqstrSQLEntries.pop_front();
 		return 1;
 	}
 }
