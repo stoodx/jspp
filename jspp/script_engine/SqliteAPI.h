@@ -6,7 +6,7 @@ struct sqlite3;
 class SqliteAPI
 {
 public:
-	SqliteAPI(const char* strDatabasePath);
+	SqliteAPI(const std::string&  strDatabasePath);
 	~SqliteAPI(void);
 	enum Status
 	{
@@ -17,7 +17,7 @@ public:
 	};
 	Status m_status;
 	std::string m_strError;
-	bool sqlExec(const char* strStaemenet, int (*callback)(void*, int, char**, char**) = NULL);
+	bool sqlExec(const std::string&  strStaemenet, int (*callback)(void*, int, char**, char**) = NULL);
 
 
 private:

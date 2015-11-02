@@ -176,9 +176,9 @@ namespace stood
 		duk_push_c_function(ctx, exec_database_native, 2);
 		duk_put_prop_string(ctx, -2,  "execDatabaseNative");
 
-		//init readDatabaseEntiesNative()
-		duk_push_c_function(ctx, read_database_entries_native, 1);
-		duk_put_prop_string(ctx, -2,  "readDatabaseEntiesNative");
+		//init readDatabaseResultNative()
+		duk_push_c_function(ctx, read_database_result_native, 0);
+		duk_put_prop_string(ctx, -2,  "readDatabaseResultNative");
 
 		//run js
 		if (duk_peval_file(ctx, strJsFilePath.c_str()) == 0)
@@ -217,7 +217,7 @@ namespace stood
 			delete m_pDuktapeJSE->m_pSQL;
 			m_pDuktapeJSE->m_pSQL = NULL;
 		}
-		m_pDuktapeJSE->m_pSQL = new SqliteAPI(strFileName.c_str());
+		m_pDuktapeJSE->m_pSQL = new SqliteAPI(strFileName);
 		if (!m_pDuktapeJSE->m_pSQL || 
 			m_pDuktapeJSE->m_pSQL->m_status != m_pDuktapeJSE->m_pSQL->DATABASE_OPEN)
 		{
@@ -269,7 +269,7 @@ namespace stood
 			duk_push_null(ctx);
 		}
 		m_pDuktapeJSE->m_deqstrSQLEntries.clear();
-		if (!m_pDuktapeJSE->m_pSQL->sqlExec(strStatement.c_str(), sql_callback))
+		if (!m_pDuktapeJSE->m_pSQL->sqlExec(strStatement, sql_callback))
 		{
 			m_pDuktapeJSE->m_strResult = m_pDuktapeJSE->m_pSQL->m_strError;
 			m_pDuktapeJSE->m_deqstrSQLEntries.clear();
@@ -298,7 +298,7 @@ namespace stood
 		return 0;
 	}
 
-	int DuktapeJSE::read_database_entries_native(duk_context *ctx)
+	int DuktapeJSE::read_database_result_native(duk_context *ctx)
 	{
 		if (!m_pDuktapeJSE || m_pDuktapeJSE->m_deqstrSQLEntries.empty())            
 		{

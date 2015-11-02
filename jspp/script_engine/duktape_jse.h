@@ -62,7 +62,7 @@ namespace stood
 		static duk_ret_t open_database_native(duk_context *ctx);
 		static duk_ret_t close_database_native(duk_context *ctx);
 		static duk_ret_t exec_database_native(duk_context *ctx);
-		static int read_database_entries_native(duk_context *ctx);
+		static int read_database_result_native(duk_context *ctx);
 		static int sql_callback(void *notUsed, int argc, char **argv, char **strColName);
 		///////////Access to SQLite database///////////////////////////
 

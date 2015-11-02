@@ -4,15 +4,15 @@
 #include "SqliteAPI.h"
 
 
-SqliteAPI::SqliteAPI(const char* strDatabasePath)
+SqliteAPI::SqliteAPI(const std::string&  strDatabasePath)
 	: m_status(Status::INIT)
 	, m_pDb(NULL)
 	, m_strError("OK")
 {
-	if (strDatabasePath)
+	if (!strDatabasePath.empty())
 	{
 		int nRes = 0;
-		nRes = sqlite3_open_v2(strDatabasePath, &m_pDb, SQLITE_OPEN_READONLY, NULL);
+		nRes = sqlite3_open_v2(strDatabasePath.c_str(), &m_pDb, SQLITE_OPEN_READONLY, NULL);
 		if (nRes != SQLITE_OK)
 		{
 			m_status = Status::ERROR_OPEN_DATABASE;
@@ -38,14 +38,14 @@ SqliteAPI::~SqliteAPI(void)
 		sqlite3_close(m_pDb);
 }
 
-bool SqliteAPI::sqlExec(const char* strStaemenet, int (*callback)(void*, int, char**, char**))
+bool SqliteAPI::sqlExec(const std::string&  strStaemenet, int (*callback)(void*, int, char**, char**))
 {
 	if (m_status != Status::DATABASE_OPEN)
 	{
 		m_strError = "DATABASE_CLOSE";
 		return false;
 	}
-	if (!strStaemenet)
+	if (strStaemenet.empty())
 	{
 		m_strError = "INVALID_PARAMETER";
 		return false;
@@ -53,7 +53,7 @@ bool SqliteAPI::sqlExec(const char* strStaemenet, int (*callback)(void*, int, ch
 
 	int nRes = 0;
 	char* strErr = NULL;
-	nRes = sqlite3_exec(m_pDb, strStaemenet, callback,  0, &strErr);
+	nRes = sqlite3_exec(m_pDb, strStaemenet.c_str(), callback,  0, &strErr);
 	if( nRes != SQLITE_OK )
 	{
 		m_strError = strErr;

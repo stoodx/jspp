@@ -28,7 +28,7 @@ function closeDatabase(pDB)
 
 function execDatabase(pDB, statement, func)
 {
-	if (this.execDatabaseNative == null || this.readDatabaseEntiesNative == null)
+	if (this.execDatabaseNative == null || this.readDatabaseResultNative == null)
 	{
 		throw new Error("No execDatabaseNative()");
 	}	
@@ -49,9 +49,9 @@ function execDatabase(pDB, statement, func)
 	
 	var nField = 0;
 	var row = ['id', 'url'];
-	for (var i = 0; i < 50; i++) //50 entries
+	while(true)
 	{
-		var rows = this.readDatabaseEntiesNative(pDB);
+		var rows = this.readDatabaseResultNative();
 		if (rows === null || typeof rows == "undefined")
 			break;
 		if (nField == 0)
@@ -77,8 +77,9 @@ function main(databaseName)
 		var pointDB = openDatabase(databaseName);
 		print("openDatabase() ", typeof(pointDB));
 
-		print("execDatabase()");
-		execDatabase(pointDB, "SELECT id,url FROM moz_favicons", function(row) {
+		var strStatement = "SELECT id,url FROM moz_favicons WHERE id BETWEEN 271 AND 1600 LIMIT 10";
+		print("execDatabase() - " + strStatement);
+		execDatabase(pointDB, strStatement, function(row) {
 			print(row.id, row.url)
 		});
 
