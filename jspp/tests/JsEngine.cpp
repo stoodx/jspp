@@ -52,7 +52,7 @@ public:
 		invalidData.m_strSourceCode = "function main(json_data) {\n"
 												"redturn json_data;\n"
 												"}\n";
-		invalidData.m_strJsonParams.assign( "{\key1\":\"value1\", \"key2\":10}" );
+		invalidData.m_strJsonParams.assign( "{\"key1\":\"value1\", \"key2\":10}" );
 		validData.m_strJsFileWithInvalidSourceCode = "js_test_file_with_invalid_source.js";
 		std::ofstream js_ifs(validData.m_strJsFileWithInvalidSourceCode);
 		js_ifs << invalidData.m_strSourceCode;
