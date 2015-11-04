@@ -1,5 +1,6 @@
 #ifdef _GOOGLE_TEST
 
+#include <windows.h>
 #include <gtest\gtest.h>
 #include "../script_engine/duktape_jse.h"
 #include <fstream>
@@ -63,7 +64,7 @@ public:
 
 TEST_F(JsEngine, BasicTest)
 {
-	ASSERT_EQ(1,1);
+	ASSERT_TRUE(js_engine.getDuktapeJSE() != NULL);
 }
 		
 TEST_F(JsEngine, eval_code)
@@ -148,6 +149,76 @@ TEST_F(JsEngine, analyzeSNSS)
 			
 	ASSERT_STREQ("{\"key1\":\"value1\", \"key2\":10}", strOutput.c_str());
 }
+
+TEST_F(JsEngine, analyzeSyncData_withNoneExistingJsFile)
+{
+	std::string strJSFilePath = "SyncData.js";
+	std::string strDatabasePath = "..\\test_resources\\places.sqlite";;
+	std::string strResult;
+
+	stood::DuktapeJSE::Status nRes = js_engine.analyzeSyncData(strJSFilePath, strDatabasePath, strResult); 
+	ASSERT_EQ(static_cast<int>(stood::DuktapeJSE::Status::JSFILE_NOT_EXISTS),
+						static_cast<int>(nRes));
+}
+
+TEST_F(JsEngine, analyzeSyncData_withNoneExistingDatabase)
+{
+	std::string strJSFilePath = "..\\test_resources\\js_open_db.js";
+	std::string strDatabasePath = "";
+	std::string strResult;
+
+	stood::DuktapeJSE::Status nRes = js_engine.analyzeSyncData(strJSFilePath, strDatabasePath, strResult); 
+	ASSERT_EQ(static_cast<int>(stood::DuktapeJSE::Status::JSFILE_NOT_EXISTS),
+						static_cast<int>(nRes));
+}
+
+TEST_F(JsEngine, analyzeSyncData_openDatabase)
+{
+	std::string strJSFilePath = "..\\test_resources\\js_open_db.js";
+	std::string strDatabasePath = "..\\test_resources\\places.sqlite";
+	std::string strResult;
+
+	stood::DuktapeJSE::Status nRes = js_engine.analyzeSyncData(strJSFilePath, strDatabasePath, strResult); 
+	EXPECT_EQ(static_cast<int>(stood::DuktapeJSE::Status::OK),
+						static_cast<int>(nRes));
+	ASSERT_TRUE(js_engine.getSqliteAPIObject() != NULL);
+}
+
+TEST_F(JsEngine, analyzeSyncData_openCloseDatabase)
+{
+	std::string strJSFilePath = "..\\test_resources\\js_open_close_db.js";
+	std::string strDatabasePath = "..\\test_resources\\places.sqlite";
+	std::string strResult;
+
+	stood::DuktapeJSE::Status nRes = js_engine.analyzeSyncData(strJSFilePath, strDatabasePath, strResult); 
+	EXPECT_EQ(static_cast<int>(stood::DuktapeJSE::Status::OK),
+						static_cast<int>(nRes));
+	ASSERT_TRUE(js_engine.getSqliteAPIObject() == NULL);
+}
+
+TEST_F(JsEngine, analyzeSyncData_invalidSQLRequest)
+{
+	std::string strJSFilePath = "..\\test_resources\\js_invalid_sql_request.js";
+	std::string strDatabasePath = "..\\test_resources\\places.sqlite";
+	std::string strResult;
+
+	stood::DuktapeJSE::Status nRes = js_engine.analyzeSyncData(strJSFilePath, strDatabasePath, strResult); 
+	ASSERT_EQ(static_cast<int>(stood::DuktapeJSE::Status::SCRIPT_RUN_ERROR),
+						static_cast<int>(nRes));
+}
+
+TEST_F(JsEngine, analyzeSyncData_readDB)
+{
+	std::string strJSFilePath = "..\\test_resources\\js_read_db.js";
+	std::string strDatabasePath = "..\\test_resources\\places.sqlite";
+	std::string strResult;
+
+	stood::DuktapeJSE::Status nRes = js_engine.analyzeSyncData(strJSFilePath, strDatabasePath, strResult); 
+	EXPECT_EQ(static_cast<int>(stood::DuktapeJSE::Status::OK),
+						static_cast<int>(nRes));
+	ASSERT_TRUE(js_engine.getSQLEntriesNumber() == 2);
+}
+
 
 /*
 TEST_F(JsEngine, analyzeSNSS_real)

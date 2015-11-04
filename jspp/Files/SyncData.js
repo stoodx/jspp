@@ -33,8 +33,7 @@ function execDatabase(pDB, statement, func)
 		throw new Error("No execDatabaseNative()");
 	}	
 	if (typeof pDB !== 'pointer' ||
-		typeof statement !== 'string' ||
-		typeof func !== 'function')
+		typeof statement !== 'string')
 	{
 		throw new Error("execDatabase() - invalid parameters: " +  
 				typeof pDB + ", " + typeof statement + ", " +  typeof func);
@@ -47,7 +46,8 @@ function execDatabase(pDB, statement, func)
 		return;
 	}
 
-	if (this.readDatabaseResultNative == null)
+	if (this.readDatabaseResultNative == null || 
+		typeof func !== 'function')
 			return; //no response
 	
 	var nField = 0;
@@ -67,7 +67,6 @@ function execDatabase(pDB, statement, func)
 			row.url = rows;
 			nField = 0;
 			func(row);
-			print();
 		}
 	}
 }

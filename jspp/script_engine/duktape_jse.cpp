@@ -141,17 +141,16 @@ namespace stood
 												   const std::string& strSynDataFilePath,
 												   std::string& strResult)
 	{
-		DuktapeJSE duk;
 		Status status = Status::OK;
 		strResult = "OK";
-		duk.m_strResult = strResult;
+		m_strResult = strResult;
 
-		if( !duk.FileExists(strJsFilePath) )
+		if( !FileExists(strJsFilePath) )
 		{
 			strResult = "JSFILE_NOT_EXISTS";
 			return Status::JSFILE_NOT_EXISTS;
 		}
-		if( !duk.FileExists(strJsFilePath) )
+		if( strSynDataFilePath.empty())
 		{
 			strResult = "SYNCDATAFILEPATH_NOT_EXISTS";
 			return Status::JSFILE_NOT_EXISTS;
@@ -200,7 +199,13 @@ namespace stood
 		}
 
 		duk_destroy_heap(ctx);
-		strResult = duk.m_strResult;
+		if (status != Status::OK)
+			return status;
+		if (m_strResult.compare(strResult) != 0)
+		{
+			strResult = m_strResult;
+			status = Status::SCRIPT_RUN_ERROR;
+		}
 		return status;
 	}	
 
@@ -222,6 +227,11 @@ namespace stood
 			m_pDuktapeJSE->m_pSQL->m_status != m_pDuktapeJSE->m_pSQL->DATABASE_OPEN)
 		{
 			m_pDuktapeJSE->m_strResult = m_pDuktapeJSE->m_pSQL->m_strError;
+			if (m_pDuktapeJSE->m_pSQL)
+			{
+				delete m_pDuktapeJSE->m_pSQL;
+				m_pDuktapeJSE->m_pSQL = NULL;
+			}
 			duk_push_null(ctx);
 			return 1;
 		}
@@ -267,6 +277,7 @@ namespace stood
 		{
 			m_pDuktapeJSE->m_strResult = "DB not init";
 			duk_push_null(ctx);
+			return 1;
 		}
 		m_pDuktapeJSE->m_deqstrSQLEntries.clear();
 		if (!m_pDuktapeJSE->m_pSQL->sqlExec(strStatement, sql_callback))

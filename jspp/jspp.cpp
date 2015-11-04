@@ -31,7 +31,8 @@ int main(int argc, char* argv[])
 	else
 	{
 		std::string strResult;
-		stood::DuktapeJSE::analyzeSyncData(argv[1], argv[2], strResult);
+		stood::DuktapeJSE duk;
+		duk.analyzeSyncData(argv[1], argv[2], strResult);
 		std::cout << "**********Finish SQLite test************" << std::endl << strResult << std::endl;
 	}
 	system("pause");

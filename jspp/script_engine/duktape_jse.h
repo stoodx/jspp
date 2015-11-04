@@ -49,9 +49,24 @@ namespace stood
 
 		///////////Access to SQLite database///////////////////////////
 	public:
-		static Status analyzeSyncData(const std::string& strJsFilePath,
+		Status analyzeSyncData(const std::string& strJsFilePath,
 							   const std::string& strSynDataFilePath,
 							   std::string& strResult);
+		DuktapeJSE* getDuktapeJSE()
+		{
+			return m_pDuktapeJSE;
+		}
+
+		SqliteAPI* getSqliteAPIObject()
+		{
+			return m_pSQL;
+		}
+
+		int getSQLEntriesNumber()
+		{
+			return m_deqstrSQLEntries.empty() ? 0 : m_deqstrSQLEntries.size();
+		}
+
 
 	private:
 		SqliteAPI* m_pSQL;
