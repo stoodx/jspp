@@ -1,6 +1,5 @@
 #ifdef _GOOGLE_TEST
 
-#include <windows.h>
 #include <gtest\gtest.h>
 #include "../script_engine/duktape_jse.h"
 #include <fstream>
