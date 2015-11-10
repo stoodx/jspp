@@ -1,24 +1,24 @@
 function openDatabase(fileName)
 {
-	if (this.openDatabaseNative == null)
+	if (this.open_database_native == null)
 	{
-		throw new Error("No openDatabaseNative()");
+		throw new Error("No open_database_native()");
 	}
-	var res = this.openDatabaseNative(fileName);
+	var res = this.open_database_native(fileName);
 	if (typeof res === 'pointer') 
 		return res;
-	throw new Error("Failed openDatabaseNative()");
+	throw new Error("Failed open_database_native()");
 }
 
 function closeDatabase(pDB)
 {
-	if (this.closeDatabaseNative == null)
+	if (this.close_database_native == null)
 	{
-		throw new Error("No closeDatabaseNative()");
+		throw new Error("No close_database_native()");
 	}
 	if (typeof pDB === 'pointer') 
 	{
-		return this.closeDatabaseNative(pDB);
+		return this.close_database_native(pDB);
 	}
 	else
 	{
@@ -28,9 +28,9 @@ function closeDatabase(pDB)
 
 function execDatabase(pDB, statement, func)
 {
-	if (this.execDatabaseNative == null)
+	if (this.exec_database_native == null)
 	{
-		throw new Error("No execDatabaseNative()");
+		throw new Error("No exec_database_native()");
 	}	
 	if (typeof pDB !== 'pointer' ||
 		typeof statement !== 'string')
@@ -39,14 +39,14 @@ function execDatabase(pDB, statement, func)
 				typeof pDB + ", " + typeof statement + ", " +  typeof func);
 	}
 	
-	var bRes = this.execDatabaseNative(pDB, statement);
+	var bRes = this.exec_database_native(pDB, statement);
 	if (bRes == false)
 	{
 		print("execDatabase() - no entries");
 		return;
 	}
 
-	if (this.readDatabaseResultNative == null || 
+	if (this.read_database_result_native == null || 
 		typeof func !== 'function')
 			return; //no response
 	
@@ -54,7 +54,7 @@ function execDatabase(pDB, statement, func)
 	var row = ['id', 'url'];
 	while(true)
 	{
-		var rows = this.readDatabaseResultNative();
+		var rows = this.read_database_result_native();
 		if (rows == null || typeof rows === "undefined")
 			break;
 		if (nField == 0)

@@ -12,20 +12,12 @@
 
 namespace stood
 {
-
-	DuktapeJSE* DuktapeJSE::m_pDuktapeJSE = NULL;
-	
 	DuktapeJSE::DuktapeJSE(void)
 	{
-		m_pDuktapeJSE = this;
-		m_pSQL = NULL;
 	}
 
 	DuktapeJSE::~DuktapeJSE(void)
 	{
-		m_pDuktapeJSE = NULL;
-		if (m_pSQL)
-			delete m_pSQL;
 	}
 
 	int DuktapeJSE::eval(std::string& source_code)
@@ -141,9 +133,6 @@ namespace stood
 												   const std::string& strSynDataFilePath,
 												   std::string& strResult)
 	{
-		Status status = Status::OK;
-		strResult = "OK";
-		m_strResult = strResult;
 
 		if( !FileExists(strJsFilePath) )
 		{
@@ -163,21 +152,7 @@ namespace stood
 		}
 		duk_push_global_object(ctx);
 
-		//init openDatabaseNative()
-		duk_push_c_function(ctx, open_database_native, 1);
-		duk_put_prop_string(ctx, -2,  "openDatabaseNative");
-
-		//init closeDatabaseNative()
-		duk_push_c_function(ctx, close_database_native, 1);
-		duk_put_prop_string(ctx, -2,  "closeDatabaseNative");
-
-		//init execDatabaseNative()
-		duk_push_c_function(ctx, exec_database_native, 2);
-		duk_put_prop_string(ctx, -2,  "execDatabaseNative");
-
-		//init readDatabaseResultNative()
-		duk_push_c_function(ctx, read_database_result_native, 0);
-		duk_put_prop_string(ctx, -2,  "readDatabaseResultNative");
+		SqliteAPI sqlLite(ctx, strSynDataFilePath);
 
 		//run js
 		if (duk_peval_file(ctx, strJsFilePath.c_str()) == 0)
@@ -188,136 +163,34 @@ namespace stood
  			if (duk_pcall(ctx, 1) != 0)
 			{
 				strResult = duk_safe_to_string(ctx, -1);
-				status = Status::SCRIPT_RUN_ERROR;
+				duk_pop(ctx);
+				duk_destroy_heap(ctx);
+				return Status::SCRIPT_RUN_ERROR;
 			}
 			duk_pop(ctx);
 		}
 		else
 		{
 			strResult = duk_safe_to_string(ctx, -1);
-			status = Status::SCRIPT_PARAMS_NOT_FOUND;
+			duk_pop(ctx);
+			duk_destroy_heap(ctx);
+			return Status::SCRIPT_PARAMS_NOT_FOUND;
 		}
 
-		duk_destroy_heap(ctx);
-		if (status != Status::OK)
-			return status;
-		if (m_strResult.compare(strResult) != 0)
+		const char* chBuf = duk_get_string(ctx, -1);
+		if( chBuf != NULL )
+			strResult.assign(chBuf);
+		else
 		{
-			strResult = m_strResult;
-			status = Status::SCRIPT_RUN_ERROR;
+			LOG_MSG(ILogger::default(), LOG_LEVEL_WARN, "DuktapeJSE: %s", duk_safe_to_string(ctx, -1));
+			duk_destroy_heap(ctx);
+			return Status::NULL_PTR_RESULT;
 		}
-		return status;
+
+		duk_pop(ctx);
+		duk_destroy_heap(ctx);
+
+		return Status::OK;	
 	}	
 
-	duk_ret_t  DuktapeJSE::open_database_native(duk_context *ctx)
-	{
-		std::string strFileName = duk_require_string(ctx, 0);
-		if (strFileName.empty() || !m_pDuktapeJSE)
-		{
-			duk_push_null(ctx);
-			return 1;
-		}
-		if (m_pDuktapeJSE->m_pSQL)
-		{
-			delete m_pDuktapeJSE->m_pSQL;
-			m_pDuktapeJSE->m_pSQL = NULL;
-		}
-		m_pDuktapeJSE->m_pSQL = new SqliteAPI(strFileName);
-		if (!m_pDuktapeJSE->m_pSQL || 
-			m_pDuktapeJSE->m_pSQL->m_status != m_pDuktapeJSE->m_pSQL->DATABASE_OPEN)
-		{
-			m_pDuktapeJSE->m_strResult = m_pDuktapeJSE->m_pSQL->m_strError;
-			if (m_pDuktapeJSE->m_pSQL)
-			{
-				delete m_pDuktapeJSE->m_pSQL;
-				m_pDuktapeJSE->m_pSQL = NULL;
-			}
-			duk_push_null(ctx);
-			return 1;
-		}
-
-		duk_push_pointer(ctx, (void*) m_pDuktapeJSE->m_pSQL);
-		return 1;
-	}
-
-	duk_ret_t DuktapeJSE::close_database_native(duk_context *ctx)
-	{
-		if (!m_pDuktapeJSE)            
-		{
-			duk_push_boolean(ctx, 0);
-			return 1;
-		}
-		SqliteAPI* pDB = (SqliteAPI*)duk_require_pointer(ctx, 0);
-		if (!m_pDuktapeJSE->m_pSQL || m_pDuktapeJSE->m_pSQL != pDB)
-		{
-			m_pDuktapeJSE->m_strResult = "DB not init";
-			duk_push_boolean(ctx, 0);
-		}
-		else
-		{
-			delete m_pDuktapeJSE->m_pSQL;
-			m_pDuktapeJSE->m_pSQL = NULL;
-			duk_push_boolean(ctx, 1);
-		}
-		return 1;
-	}
-
-	duk_ret_t DuktapeJSE::exec_database_native(duk_context *ctx)
-	{
-		if (!m_pDuktapeJSE)            
-		{
-			duk_push_boolean(ctx, 0);
-			return 1;
-		}
-		SqliteAPI* pDB = (SqliteAPI*)duk_require_pointer(ctx, 0);
-		std::string strStatement = duk_require_string(ctx, -1);
-		if (!m_pDuktapeJSE->m_pSQL || 
-			m_pDuktapeJSE->m_pSQL != pDB || 
-			strStatement.empty())
-		{
-			m_pDuktapeJSE->m_strResult = "DB not init";
-			duk_push_null(ctx);
-			return 1;
-		}
-		m_pDuktapeJSE->m_deqstrSQLEntries.clear();
-		if (!m_pDuktapeJSE->m_pSQL->sqlExec(strStatement, sql_callback))
-		{
-			m_pDuktapeJSE->m_strResult = m_pDuktapeJSE->m_pSQL->m_strError;
-			m_pDuktapeJSE->m_deqstrSQLEntries.clear();
-			duk_push_boolean(ctx, 0);
-			return 1;
-		}
-		if (m_pDuktapeJSE->m_deqstrSQLEntries.empty())
-		{
-			duk_push_boolean(ctx, 0);
-		}
-		else
-		{
-			duk_push_boolean(ctx, 1);
-		}
-		return 1;
-	}
-
-	int DuktapeJSE::sql_callback(void *notUsed, int argc, char **strRow, char **strColName)
-	{
-		if (!m_pDuktapeJSE)
-			return 1;
-		for(int i = 0; i < argc; i++)
-		{
-			m_pDuktapeJSE->m_deqstrSQLEntries.push_back(strRow[i] ? strRow[i] : NULL );
-		}
-		return 0;
-	}
-
-	int DuktapeJSE::read_database_result_native(duk_context *ctx)
-	{
-		if (!m_pDuktapeJSE || m_pDuktapeJSE->m_deqstrSQLEntries.empty())            
-		{
-			duk_push_null(ctx);
-			return 1;
-		}
-		duk_push_string(ctx, m_pDuktapeJSE->m_deqstrSQLEntries[0].c_str());
-		m_pDuktapeJSE->m_deqstrSQLEntries.pop_front();
-		return 1;
-	}
 }

@@ -52,33 +52,11 @@ namespace stood
 		Status analyzeSyncData(const std::string& strJsFilePath,
 							   const std::string& strSynDataFilePath,
 							   std::string& strResult);
-		DuktapeJSE* getDuktapeJSE()
-		{
-			return m_pDuktapeJSE;
-		}
-
-		SqliteAPI* getSqliteAPIObject()
-		{
-			return m_pSQL;
-		}
-
-		int getSQLEntriesNumber()
-		{
-			return m_deqstrSQLEntries.empty() ? 0 : m_deqstrSQLEntries.size();
-		}
 
 
 	private:
-		SqliteAPI* m_pSQL;
-		std::string m_strResult;
 		std::deque<std::string> m_deqstrSQLEntries; 
-		static DuktapeJSE* m_pDuktapeJSE;
-		//callbacks
-		static duk_ret_t open_database_native(duk_context *ctx);
-		static duk_ret_t close_database_native(duk_context *ctx);
-		static duk_ret_t exec_database_native(duk_context *ctx);
-		static int read_database_result_native(duk_context *ctx);
-		static int sql_callback(void *notUsed, int argc, char **argv, char **strColName);
+
 		///////////Access to SQLite database///////////////////////////
 
 	};
