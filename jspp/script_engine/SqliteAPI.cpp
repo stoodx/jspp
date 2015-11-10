@@ -9,6 +9,8 @@ SqliteAPI::SqliteAPI(const std::string&  strDatabasePath)
 	, m_pDb(NULL)
 	, m_strError("OK")
 {
+	//? Declare here export function just like in SnssFileAPI
+	//? PUSH_C_FUNCTION();
 	if (!strDatabasePath.empty())
 	{
 		int nRes = 0;

@@ -163,6 +163,10 @@ namespace stood
 		}
 		duk_push_global_object(ctx);
 
+		//? What for. Do just like with SnssFileAPI(...)
+		// 
+		// SqliteAPI snssFileApi(ctx, strDbPath);
+
 		//init openDatabaseNative()
 		duk_push_c_function(ctx, open_database_native, 1);
 		duk_put_prop_string(ctx, -2,  "openDatabaseNative");
@@ -209,6 +213,8 @@ namespace stood
 		return status;
 	}	
 
+	//? DuktapeJSE does not need to know about it
+	//? Move this function to SqliteAPI
 	duk_ret_t  DuktapeJSE::open_database_native(duk_context *ctx)
 	{
 		std::string strFileName = duk_require_string(ctx, 0);
