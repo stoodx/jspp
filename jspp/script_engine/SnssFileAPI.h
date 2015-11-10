@@ -2,10 +2,9 @@
 
 #include <string>
 #include <fstream>
+#include "BaseAPI.h"
 
-#include "duktape\duktape.h"
-
-class SnssFileAPI
+class SnssFileAPI : public BaseAPI
 {
 public:
 	SnssFileAPI(duk_context* ctx,

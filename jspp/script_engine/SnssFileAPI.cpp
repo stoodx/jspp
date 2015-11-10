@@ -10,9 +10,6 @@
 #include "../ConfigurationService.h"
 #endif
 
-#define PUSH_C_FUNCTION(fcn, nargs) \
-	duk_push_c_function(ctx, fcn, nargs);\
-	duk_put_prop_string(ctx, -2, #fcn);
 
 std::ifstream SnssFileAPI::m_SnssFile;
 std::string SnssFileAPI::m_ParamFilePath = "";
@@ -20,6 +17,7 @@ std::string SnssFileAPI::m_ParamFilePath = "";
 SnssFileAPI::SnssFileAPI(duk_context* ctx,
 						 const std::string& strSnssFilePath,
 						 const std::string& strSyncDataFilePath)
+						 : BaseAPI(ctx)
 {	
 	PUSH_C_FUNCTION(readByte, 0);
 	PUSH_C_FUNCTION(readInt16, 0);

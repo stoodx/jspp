@@ -117,6 +117,7 @@
   <ItemGroup>
     <ClCompile Include="jspp.cpp" />
     <ClCompile Include="logger\ILogger.cpp" />
+    <ClCompile Include="script_engine\BaseAPI.cpp" />
     <ClCompile Include="script_engine\duktape\duktape.c" />
     <ClCompile Include="script_engine\duktape_jse.cpp" />
     <ClCompile Include="script_engine\SnssFileAPI.cpp" />
@@ -127,6 +128,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="logger\ILogger.h" />
+    <ClInclude Include="script_engine\BaseAPI.h" />
     <ClInclude Include="script_engine\duktape\duktape.h" />
     <ClInclude Include="script_engine\duktape_jse.h" />
     <ClInclude Include="script_engine\SnssFileAPI.h" />
