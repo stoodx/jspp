@@ -137,17 +137,20 @@ namespace stood
 		if( !FileExists(strJsFilePath) )
 		{
 			strResult = "JSFILE_NOT_EXISTS";
+			LOG_MSG(ILogger::default(), LOG_LEVEL_WARN, "DuktapeJSE: %s", strResult.c_str());
 			return Status::JSFILE_NOT_EXISTS;
 		}
 		if( strSynDataFilePath.empty())
 		{
 			strResult = "SYNCDATAFILEPATH_NOT_EXISTS";
+			LOG_MSG(ILogger::default(), LOG_LEVEL_WARN, "DuktapeJSE: %s", strResult.c_str());
 			return Status::JSFILE_NOT_EXISTS;
 		}
 		duk_context* ctx = duk_create_heap_default();
 		if(!ctx)
 		{
 			strResult = "HEAP_CREATION_ERROR";
+			LOG_MSG(ILogger::default(), LOG_LEVEL_WARN, "DuktapeJSE: %s", strResult.c_str());
 			return Status::HEAP_CREATION_ERROR;
 		}
 		duk_push_global_object(ctx);
@@ -163,6 +166,7 @@ namespace stood
  			if (duk_pcall(ctx, 1) != 0)
 			{
 				strResult = duk_safe_to_string(ctx, -1);
+				LOG_MSG(ILogger::default(), LOG_LEVEL_WARN, "DuktapeJSE: %s", strResult.c_str());
 				duk_pop(ctx);
 				duk_destroy_heap(ctx);
 				return Status::SCRIPT_RUN_ERROR;
@@ -172,19 +176,10 @@ namespace stood
 		else
 		{
 			strResult = duk_safe_to_string(ctx, -1);
+			LOG_MSG(ILogger::default(), LOG_LEVEL_WARN, "DuktapeJSE: %s", strResult.c_str());
 			duk_pop(ctx);
 			duk_destroy_heap(ctx);
-			return Status::SCRIPT_PARAMS_NOT_FOUND;
-		}
-
-		const char* chBuf = duk_get_string(ctx, -1);
-		if( chBuf != NULL )
-			strResult.assign(chBuf);
-		else
-		{
-			LOG_MSG(ILogger::default(), LOG_LEVEL_WARN, "DuktapeJSE: %s", duk_safe_to_string(ctx, -1));
-			duk_destroy_heap(ctx);
-			return Status::NULL_PTR_RESULT;
+			return Status::INVALID_SOURCE_CODE;
 		}
 
 		duk_pop(ctx);

@@ -1,24 +1,24 @@
 function openDatabase(fileName)
 {
-	if (this.openDatabaseNative == null)
+	if (this.open_database == null)
 	{
 		throw new Error("No openDatabaseNative()");
 	}
-	var res = this.openDatabaseNative(fileName);
+	var res = this.open_database(fileName);
 	if (typeof res === 'pointer') 
 		return res;
-	throw new Error("Failed openDatabaseNative()");
+	throw new Error("Failed open_database()");
 }
 
 function closeDatabase(pDB)
 {
-	if (this.closeDatabaseNative == null)
+	if (this.close_database == null)
 	{
-		throw new Error("No closeDatabaseNative()");
+		throw new Error("No close_database()");
 	}
 	if (typeof pDB === 'pointer') 
 	{
-		return this.closeDatabaseNative(pDB);
+		return this.close_database(pDB);
 	}
 	else
 	{
@@ -26,49 +26,38 @@ function closeDatabase(pDB)
 	}
 }
 
-function execDatabase(pDB, statement, func)
+function execDatabase(pDB, statement)
 {
-	if (this.execDatabaseNative == null)
+	if (this.exec_database == null)
 	{
-		throw new Error("No execDatabaseNative()");
+		throw new Error("No exec_databasee()");
 	}	
 	if (typeof pDB !== 'pointer' ||
 		typeof statement !== 'string')
 	{
 		throw new Error("execDatabase() - invalid parameters: " +  
-				typeof pDB + ", " + typeof statement + ", " +  typeof func);
+				typeof pDB + ", " + typeof statement );
 	}
 	
-	var bRes = this.execDatabaseNative(pDB, statement);
+	var bRes = this.exec_database(pDB, statement, true);
 	if (bRes == false)
 	{
-		print("execDatabase() - no entries");
-		return;
+		throw new Error("execDatabase() - no entries");
 	}
 
-	if (this.readDatabaseResultNative == null || 
-		typeof func !== 'function')
-			return; //no response
+	if (this.read_database_result == null)
+			throw new Error("read_database_result() - no function");
 	
-	var nField = 0;
-	var row = ['id', 'url'];
+	var nCount = 0;
 	while(true)
 	{
-		var rows = this.readDatabaseResultNative();
+		var rows = this.read_database_result();
 		if (rows == null || typeof rows === "undefined")
 			break;
-		if (nField == 0)
-		{
-			row.id = rows;
-			nField = 1;
-		}
-		else
-		{
-			row.url = rows;
-			nField = 0;
-			func(row);
-		}
+		nCount ++;
 	}
+	if (nCount != 2)
+		throw new Error("read_database_result() - incorrected entries");
 }
 
 function main(databaseName)

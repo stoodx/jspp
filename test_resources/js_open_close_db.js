@@ -1,24 +1,19 @@
 function openDatabase(fileName)
 {
-	if (this.openDatabaseNative == null)
-	{
-		throw new Error("No openDatabaseNative()");
-	}
-	var res = this.openDatabaseNative(fileName);
+	var res = this.open_database(fileName);
 	if (typeof res === 'pointer') 
 		return res;
-	throw new Error("Failed openDatabaseNative()");
+	throw new Error("Failed open_database()");
 }
 
 function closeDatabase(pDB)
 {
-	if (this.closeDatabaseNative == null)
-	{
-		throw new Error("No closeDatabaseNative()");
-	}
 	if (typeof pDB === 'pointer') 
 	{
-		return this.closeDatabaseNative(pDB);
+		if (this.close_database(pDB) == true)
+			return true;
+		else
+		    throw new Error("Failed close_database()");			
 	}
 	else
 	{
@@ -29,7 +24,7 @@ function closeDatabase(pDB)
 
 function main(databaseName)
 {
-	try {
+	try{
 		var pointDB = openDatabase(databaseName);
 		closeDatabase(pointDB);
 	}	catch (e) {

@@ -6,8 +6,8 @@ function openDatabase(fileName)
 	throw new Error("Failed open_database()");
 }
 
-function main(databaseName)
+function main("cdcdc\n")
 {
-	openDatabase(databaseName);
+	openDatabase(null);
 
 }
