@@ -47,17 +47,9 @@ namespace stood
 		bool FileExists(const std::string& strFilePath);
 		bool isJsonValid(const std::string& strJson);
 
-		///////////Access to SQLite database///////////////////////////
-	public:
 		Status analyzeSyncData(const std::string& strJsFilePath,
 							   const std::string& strSynDataFilePath,
 							   std::string& strResult);
-
-
-	private:
-		std::deque<std::string> m_deqstrSQLEntries; 
-
-		///////////Access to SQLite database///////////////////////////
 
 	};
 }

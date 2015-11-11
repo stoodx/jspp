@@ -2,6 +2,8 @@
 #include <memory>
 #include <mutex>
 
+//#define USE_CONSOLE_LOGGER //fix me!!! viktor
+
 #define LOG_LEVEL_INFO  "info"
 #define LOG_LEVEL_ERROR "error"
 #define LOG_LEVEL_WARN  "warn"

@@ -1,24 +1,24 @@
 function openDatabase(fileName)
 {
-	if (this.open_database_native == null)
+	if (this.open_database == null)
 	{
-		throw new Error("No open_database_native()");
+		throw new Error("No open_database()");
 	}
-	var res = this.open_database_native(fileName);
+	var res = this.open_database(fileName);
 	if (typeof res === 'pointer') 
 		return res;
-	throw new Error("Failed open_database_native()");
+	throw new Error("Failed open_database()");
 }
 
 function closeDatabase(pDB)
 {
-	if (this.close_database_native == null)
+	if (this.close_database == null)
 	{
-		throw new Error("No close_database_native()");
+		throw new Error("No close_database()");
 	}
 	if (typeof pDB === 'pointer') 
 	{
-		return this.close_database_native(pDB);
+		return this.close_database(pDB);
 	}
 	else
 	{
@@ -28,7 +28,7 @@ function closeDatabase(pDB)
 
 function execDatabase(pDB, statement, func)
 {
-	if (this.exec_database_native == null)
+	if (this.exec_database == null)
 	{
 		throw new Error("No exec_database_native()");
 	}	
@@ -39,22 +39,25 @@ function execDatabase(pDB, statement, func)
 				typeof pDB + ", " + typeof statement + ", " +  typeof func);
 	}
 	
-	var bRes = this.exec_database_native(pDB, statement);
+	if (typeof func === 'function')
+		bRes = this.exec_database(pDB, statement, true);
+	else
+		bRes = this.exec_database(pDB, statement, false);
 	if (bRes == false)
 	{
-		print("execDatabase() - no entries");
+		throw new Error("execDatabase() - failed");
 		return;
 	}
 
-	if (this.read_database_result_native == null || 
+	if (this.read_database_result == null || 
 		typeof func !== 'function')
-			return; //no response
+			return; //no responses
 	
 	var nField = 0;
 	var row = ['id', 'url'];
 	while(true)
 	{
-		var rows = this.read_database_result_native();
+		var rows = this.read_database_result();
 		if (rows == null || typeof rows === "undefined")
 			break;
 		if (nField == 0)
@@ -80,15 +83,16 @@ function main(databaseName)
 		print("openDatabase() ", typeof(pointDB));
 
 		var strStatement = "SELECT id,url FROM moz_favicons WHERE id BETWEEN 271 AND 1600 LIMIT 10";
-		print("execDatabase() - " + strStatement);
+		print("execDatabase() -> " + strStatement);
 		execDatabase(pointDB, strStatement, function(row) {
-			print(row.id, row.url)
+			print(row.id); 
+			print(row.url);
 		});
 
 		var res = closeDatabase(pointDB);
-		print("closeDatabase() ", res);
+		print("closeDatabase() -> ", res);
 		
-		print("Test finish");
+		print("JS finish");
 	}	catch (e) {
 		print(e.stack);
 	}

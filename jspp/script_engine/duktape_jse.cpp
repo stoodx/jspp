@@ -152,7 +152,7 @@ namespace stood
 		}
 		duk_push_global_object(ctx);
 
-		SqliteAPI sqlLite(ctx, strSynDataFilePath);
+		SqliteAPI sqlLite(ctx);
 
 		//run js
 		if (duk_peval_file(ctx, strJsFilePath.c_str()) == 0)
