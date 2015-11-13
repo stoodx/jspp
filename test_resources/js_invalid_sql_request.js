@@ -1,24 +1,24 @@
 function openDatabase(fileName)
 {
-	if (this.openDatabaseNative == null)
+	if (this.sqlite_open == null)
 	{
-		throw new Error("No openDatabaseNative()");
+		throw new Error("No sqlite_open()");
 	}
-	var res = this.openDatabaseNative(fileName);
+	var res = this.sqlite_open(fileName);
 	if (typeof res === 'pointer') 
 		return res;
-	throw new Error("Failed openDatabaseNative()");
+	throw new Error("Failed sqlite_open()");
 }
 
 function closeDatabase(pDB)
 {
-	if (this.closeDatabaseNative == null)
+	if (this.sqlite_close == null)
 	{
-		throw new Error("No closeDatabaseNative()");
+		throw new Error("No sqlite_close()");
 	}
 	if (typeof pDB === 'pointer') 
 	{
-		return this.closeDatabaseNative(pDB);
+		return this.sqlite_close(pDB);
 	}
 	else
 	{
@@ -28,9 +28,9 @@ function closeDatabase(pDB)
 
 function execDatabase(pDB, statement, func)
 {
-	if (this.execDatabaseNative == null)
+	if (this.sqlite_exec == null)
 	{
-		throw new Error("No execDatabaseNative()");
+		throw new Error("No sqlite_exec()");
 	}	
 	if (typeof pDB !== 'pointer' ||
 		typeof statement !== 'string')
@@ -39,40 +39,15 @@ function execDatabase(pDB, statement, func)
 				typeof pDB + ", " + typeof statement + ", " +  typeof func);
 	}
 	
-	var bRes = this.execDatabaseNative(pDB, statement);
+	var bRes = this.sqlite_exec(pDB, statement, false);
 	if (bRes == false)
 	{
-		return;
-	}
-
-	if (this.readDatabaseResultNative == null || 
-		typeof func !== 'function')
-			return; //no response
-	
-	var nField = 0;
-	var row = ['id', 'url'];
-	while(true)
-	{
-		var rows = this.readDatabaseResultNative();
-		if (rows == null || typeof rows === "undefined")
-			break;
-		if (nField == 0)
-		{
-			row.id = rows;
-			nField = 1;
-		}
-		else
-		{
-			row.url = rows;
-			nField = 0;
-			func(row);
-		}
+		throw new Error("sqlite_exec() - error");
 	}
 }
 
 function main(databaseName)
 {
-
 	var pointDB = openDatabase(databaseName);
 	var strStatement = "SELECT id,url FROM moz_invalid_nametable WHERE id BETWEEN 271 AND 1600 LIMIT 10";
 	execDatabase(pointDB, strStatement, null);
