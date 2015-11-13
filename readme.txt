@@ -14,30 +14,50 @@ Result:
 **********Start SQLite test************
 D:\Work\jspp\trunk\jspp\Files\places.sqlite
 openDatabase()  pointer
-execDatabase() - SELECT id,url FROM moz_favicons WHERE id BETWEEN 271 AND 1600 LIMIT 10
-271 http://www.abitant.com/favicon.ico
-
-278 http://24tv.ua/favicon.ico
-
-283 https://ninjablocks-discuss-uploads.s3.amazonaws.com/11886cb29bfeb3a257b828f
-020cca322d008f8ebbc.png
-
-284 https://edit.europe.yahoo.com/favicon.ico
-
-285 http://wallpaperswide.com/favicon.ico
-
-286 http://www.hdwallpapers.in/favicon.ico
-
-287 http://wallpaperfx.com/favicon.png
-
-288 http://hdw.eweb4.com/favicon.ico
-
-289 http://nevseoboi.com.ua/favicon.ico
-
-292 http://magic.wizards.com/sites/all/themes/wiz_mtg/favicon.ico
-
-closeDatabase()  true
-Test finish
+execDatabase() -> SELECT id,url FROM moz_favicons WHERE id BETWEEN 271 AND 1600
+LIMIT 10
+{"Database": "D:\Work\jspp\trunk\jspp\Files\places.sqlite", "Table": "moz_favico
+ns", "Column": "id", "Value": "271"}
+{"Database": "D:\Work\jspp\trunk\jspp\Files\places.sqlite", "Table": "moz_favico
+ns", "Column": "url", "Value": "http://www.abitant.com/favicon.ico"}
+{"Database": "D:\Work\jspp\trunk\jspp\Files\places.sqlite", "Table": "moz_favico
+ns", "Column": "id", "Value": "278"}
+{"Database": "D:\Work\jspp\trunk\jspp\Files\places.sqlite", "Table": "moz_favico
+ns", "Column": "url", "Value": "http://24tv.ua/favicon.ico"}
+{"Database": "D:\Work\jspp\trunk\jspp\Files\places.sqlite", "Table": "moz_favico
+ns", "Column": "id", "Value": "283"}
+{"Database": "D:\Work\jspp\trunk\jspp\Files\places.sqlite", "Table": "moz_favico
+ns", "Column": "url", "Value": "https://ninjablocks-discuss-uploads.s3.amazonaws
+.com/11886cb29bfeb3a257b828f020cca322d008f8ebbc.png"}
+{"Database": "D:\Work\jspp\trunk\jspp\Files\places.sqlite", "Table": "moz_favico
+ns", "Column": "id", "Value": "284"}
+{"Database": "D:\Work\jspp\trunk\jspp\Files\places.sqlite", "Table": "moz_favico
+ns", "Column": "url", "Value": "https://edit.europe.yahoo.com/favicon.ico"}
+{"Database": "D:\Work\jspp\trunk\jspp\Files\places.sqlite", "Table": "moz_favico
+ns", "Column": "id", "Value": "285"}
+{"Database": "D:\Work\jspp\trunk\jspp\Files\places.sqlite", "Table": "moz_favico
+ns", "Column": "url", "Value": "http://wallpaperswide.com/favicon.ico"}
+{"Database": "D:\Work\jspp\trunk\jspp\Files\places.sqlite", "Table": "moz_favico
+ns", "Column": "id", "Value": "286"}
+{"Database": "D:\Work\jspp\trunk\jspp\Files\places.sqlite", "Table": "moz_favico
+ns", "Column": "url", "Value": "http://www.hdwallpapers.in/favicon.ico"}
+{"Database": "D:\Work\jspp\trunk\jspp\Files\places.sqlite", "Table": "moz_favico
+ns", "Column": "id", "Value": "287"}
+{"Database": "D:\Work\jspp\trunk\jspp\Files\places.sqlite", "Table": "moz_favico
+ns", "Column": "url", "Value": "http://wallpaperfx.com/favicon.png"}
+{"Database": "D:\Work\jspp\trunk\jspp\Files\places.sqlite", "Table": "moz_favico
+ns", "Column": "id", "Value": "288"}
+{"Database": "D:\Work\jspp\trunk\jspp\Files\places.sqlite", "Table": "moz_favico
+ns", "Column": "url", "Value": "http://hdw.eweb4.com/favicon.ico"}
+{"Database": "D:\Work\jspp\trunk\jspp\Files\places.sqlite", "Table": "moz_favico
+ns", "Column": "id", "Value": "289"}
+{"Database": "D:\Work\jspp\trunk\jspp\Files\places.sqlite", "Table": "moz_favico
+ns", "Column": "url", "Value": "http://nevseoboi.com.ua/favicon.ico"}
+{"Database": "D:\Work\jspp\trunk\jspp\Files\places.sqlite", "Table": "moz_favico
+ns", "Column": "id", "Value": "292"}
+{"Database": "D:\Work\jspp\trunk\jspp\Files\places.sqlite", "Table": "moz_favico
+ns", "Column": "url", "Value": "http://magic.wizards.com/sites/all/themes/wiz_mt
+g/favicon.ico"}
+closeDatabase() ->  true
+JS finish
 **********Finish SQLite test************
-OK
-****
