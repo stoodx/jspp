@@ -29,6 +29,11 @@ SqliteAPI::Status SqliteAPI::openDatabase(const std::string&  strDatabasePath)
 		nRes = sqlite3_open_v2(strDatabasePath.c_str(), &m_pDb, SQLITE_OPEN_READONLY, NULL);
 		if (nRes != SQLITE_OK)
 		{
+			if (m_pDb)
+			{
+				sqlite3_close(m_pDb);
+				m_pDb = NULL;
+			}
 			m_status = Status::ERROR_OPEN_DATABASE;
 			m_strError =  sqlite3_errmsg(m_pDb);
 			LOG_MSG(ILogger::default(), LOG_LEVEL_WARN, "SqliteAPI - error by openning %s.", m_strError.c_str());
@@ -40,6 +45,11 @@ SqliteAPI::Status SqliteAPI::openDatabase(const std::string&  strDatabasePath)
 	}
 	else
 	{
+		if (m_pDb)
+		{
+			sqlite3_close(m_pDb);
+			m_pDb = NULL;
+		}
 		m_status = Status::INVALID_PARAMETER;
 		m_strError = "INVALID_PARAMETER";
 		LOG_MSG(ILogger::default(), LOG_LEVEL_WARN, "SqliteAPI - error by openning %s.", m_strError.c_str());
@@ -50,7 +60,7 @@ SqliteAPI::Status SqliteAPI::openDatabase(const std::string&  strDatabasePath)
 
 void SqliteAPI::closeDatabase()
 {
-	if (m_status == Status::DATABASE_OPEN)
+	if (m_status == Status::DATABASE_OPEN && m_pDb)
 	{
 		sqlite3_close(m_pDb);
 		m_pDb = NULL;

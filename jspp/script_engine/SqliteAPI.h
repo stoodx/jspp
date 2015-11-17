@@ -23,9 +23,11 @@ public:
 	//opens database, uses direct access to sqlite API.
 	//call from sqlite_open() or from C/C++ context. 
 	Status openDatabase(const std::string&  strDatabasePath);
+	
 	//closes database, uses direct access to sqlite API.
 	//call from sqlite_open() or from C/C++ context.
 	void closeDatabase();
+
 	//operations with database, uses direct access to sqlite API.
 	//call from sqlite_exe() or from C/C++ context.
 	//where:
@@ -41,10 +43,13 @@ private:
 
 	//export function for js, uses openDatabase() for API access 
 	static duk_ret_t sqlite_open(duk_context *ctx);
+	
 	//export function for js, uses closeDatabase() for API access
 	static duk_ret_t sqlite_close(duk_context *ctx);
+	
 	//export function for js, uses execDatabase() for API access
 	static duk_ret_t sqlite_exec(duk_context *ctx);
+	
 	//export function for js
 	//reads results of  sqlite_exec()'s operations (if it needs), 
 	//has access to m_deqstrSQLEntries
@@ -65,6 +70,7 @@ private:
 	std::string m_strDatabaseFileName; 
 	//keeps table name for json respnse
 	std::string m_strTableName; 
+	
 	//get a table name from sql command for json 
 	bool getTableName(const std::string& strStatement, std::string& strTableName);
 
