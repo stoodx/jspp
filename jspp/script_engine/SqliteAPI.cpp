@@ -10,7 +10,8 @@ SqliteAPI* SqliteAPI::m_pSqliteAPI = NULL;
 SqliteAPI::SqliteAPI(duk_context* ctx)
 	: BaseAPI(ctx)	
 	, m_pDb(NULL)
-	, m_status(Status::INIT) 
+	, m_status(Status::INIT)
+	, m_strTableName("")
 {
 	m_pSqliteAPI = this;
 	PUSH_C_FUNCTION(sqlite_open, 1);
