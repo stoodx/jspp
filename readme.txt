@@ -7,7 +7,7 @@ jspp.exe <path_to_start_js_module> <path_to_sql_database>
 
 For example, start from Debug project:
  
-jspp.exe ".\Files\SyncData.js" "D:\Work\jspp\trunk\jspp\Files\places.sqlite"
+jspp.exe "D:\Work\jspp\branches\develop\test_resources\js_full_main.js" "D:\Work\jspp\branches\develop\test_resources\places.sqlite"
 
 Result:
 
